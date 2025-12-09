@@ -1,15 +1,17 @@
 import { Button, Text } from '@/components/atoms';
+import { useNotifications } from '@/hooks/useNotifications';
 import React from 'react';
 import { ActivityIndicator, useWindowDimensions, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { WebView } from 'react-native-webview';
 
 const WebViewScreenPresentation = () => {
-    const { height } = useWindowDimensions()
+    const { height } = useWindowDimensions();
+    const { scheduleNotification1, scheduleNotification2 } = useNotifications();
+
     return (
         <SafeAreaView style={{ flex: 1 }}>
             <View style={{ height: height * 0.8 }}>
-
                 <WebView
                     source={{ uri: 'https://next-potfolio-zeta.vercel.app/' }}
                     startInLoadingState={true}
@@ -22,15 +24,15 @@ const WebViewScreenPresentation = () => {
                 />
             </View>
             <View className='flex flex-row justify-between px-6 bg-yellow-200'>
-                <Button>
-                    <Text>Local Notifications</Text>
+                <Button onPress={scheduleNotification1}>
+                    <Text>Mail Notification (2s)</Text>
                 </Button>
-                <Button>
-                    <Text>Push Notifications</Text>
+                <Button onPress={scheduleNotification2}>
+                    <Text>Update Notification (5s)</Text>
                 </Button>
             </View>
         </SafeAreaView>
-    )
-}
+    );
+};
 
 export default WebViewScreenPresentation
