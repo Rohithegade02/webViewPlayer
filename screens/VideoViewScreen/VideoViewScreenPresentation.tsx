@@ -1,7 +1,9 @@
 import { Button, Text } from '@/components/atoms'
+import { AnimatedSlider } from '@/components/molecules'
+import { formatTime } from '@/lib/formaTime'
 import { VideoView } from 'expo-video'
 import React from 'react'
-import { Pressable, StyleSheet, useWindowDimensions, View } from 'react-native'
+import { StyleSheet, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { VideoViewScreenProps } from './types'
 
@@ -25,16 +27,6 @@ const VideoViewScreenPresentation = ({
     previousVideo,
     switchToVideo
 }: VideoViewScreenProps) => {
-    const { width, height } = useWindowDimensions();
-
-    // Format time in MM:SS format
-    const formatTime = (seconds: number) => {
-        if (isNaN(seconds)) return '00:00';
-        const mins = Math.floor(seconds / 60);
-        const secs = Math.floor(seconds % 60);
-        return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-    };
-
     return (
         <SafeAreaView style={styles.contentContainer}>
             {/* Video Info Header */}
@@ -43,9 +35,6 @@ const VideoViewScreenPresentation = ({
                 <Text style={styles.videoCounter}>
                     Video {currentIndex + 1} of {totalVideos}
                 </Text>
-                {shouldPreload && (
-                    <Text style={styles.preloadIndicator}>✓ Preloading enabled</Text>
-                )}
             </View>
 
             {/* Video Switching Controls */}
@@ -79,34 +68,12 @@ const VideoViewScreenPresentation = ({
                 <Text style={styles.timeText}>{formatTime(duration)}</Text>
             </View>
 
-            {/* Seek Slider */}
-            <View style={styles.seekContainer}>
-                <View style={styles.seekBar}>
-                    <View
-                        style={[
-                            styles.seekProgress,
-                            { width: `${(currentTime / duration) * 100}%` }
-                        ]}
-                    />
-                    <Pressable
-                        style={styles.seekHandle}
-                        onPress={(e) => {
-                            // Calculate the position relative to the seek bar
-                            const seekBarWidth = width - 100; // Accounting for padding
-                            const touchX = e.nativeEvent.locationX;
-                            const newTime = (touchX / seekBarWidth) * duration;
-                            seekTo(newTime);
-                        }}
-                    >
-                        <View
-                            style={[
-                                styles.seekThumb,
-                                { left: `${(currentTime / duration) * 100}%` }
-                            ]}
-                        />
-                    </Pressable>
-                </View>
-            </View>
+            {/* Animated Seek Slider */}
+            <AnimatedSlider
+                currentTime={currentTime}
+                duration={duration}
+                seekTo={seekTo}
+            />
 
             {/* Playback Controls */}
             <View style={styles.controlsContainer}>
@@ -220,41 +187,9 @@ const styles = StyleSheet.create({
         marginTop: 16,
     },
     timeText: {
-        color: '#fff',
+        color: '#000',
         fontSize: 16,
         fontWeight: '600',
-    },
-    seekContainer: {
-        width: '100%',
-        paddingHorizontal: 20,
-        marginTop: 12,
-    },
-    seekBar: {
-        height: 40,
-        backgroundColor: '#333',
-        borderRadius: 4,
-        overflow: 'hidden',
-        justifyContent: 'center',
-    },
-    seekProgress: {
-        position: 'absolute',
-        left: 0,
-        top: 0,
-        bottom: 0,
-        backgroundColor: '#1E90FF',
-    },
-    seekHandle: {
-        width: '100%',
-        height: '100%',
-    },
-    seekThumb: {
-        position: 'absolute',
-        width: 16,
-        height: 16,
-        backgroundColor: '#fff',
-        borderRadius: 8,
-        top: 12,
-        marginLeft: -8,
     },
     controlsContainer: {
         flexDirection: 'row',
