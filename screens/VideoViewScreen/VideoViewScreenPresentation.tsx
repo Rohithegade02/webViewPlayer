@@ -1,5 +1,5 @@
 import { Button, Text } from '@/components/atoms'
-import { AnimatedSlider } from '@/components/molecules'
+import { AnimatedSlider, VolumeSlider } from '@/components/molecules'
 import { formatTime } from '@/lib/formaTime'
 import { VideoView } from 'expo-video'
 import React from 'react'
@@ -18,7 +18,6 @@ const VideoViewScreenPresentation = ({
     currentVideoInfo,
     currentIndex,
     totalVideos,
-    shouldPreload,
     toggleMute,
     seekTo,
     skipForward,
@@ -28,6 +27,7 @@ const VideoViewScreenPresentation = ({
     previousVideo,
     switchToVideo
 }: VideoViewScreenProps) => {
+    console.log('volume', Math.round(volume * 100));
     return (
         <SafeAreaView style={styles.contentContainer}>
             {/* Video Info Header */}
@@ -57,6 +57,7 @@ const VideoViewScreenPresentation = ({
                 allowsPictureInPicture
                 contentFit={'contain'}
                 onFullscreenExit={() => player.pause()}
+                nativeControls={false}
                 fullscreenOptions={{
                     enable: true
                 }}
@@ -110,20 +111,8 @@ const VideoViewScreenPresentation = ({
                 <Button onPress={toggleMute}>
                     <Text>{muted ? '🔇 Unmute' : '🔊 Mute'}</Text>
                 </Button>
-
-                {/* Volume Control */}
-                <View style={styles.volumeSliderContainer}>
-                    <Text style={styles.volumeLabel}>Volume: {Math.round(volume * 100)}%</Text>
-                    <View style={styles.volumeButtons}>
-                        <Button onPress={() => setVolume(volume - 0.1)}>
-                            <Text>-</Text>
-                        </Button>
-                        <Button onPress={() => setVolume(volume + 0.1)}>
-                            <Text>+</Text>
-                        </Button>
-                    </View>
-                </View>
             </View>
+            <VolumeSlider volume={volume} setVolume={setVolume} />
         </SafeAreaView>
     );
 };
@@ -209,7 +198,6 @@ const styles = StyleSheet.create({
         gap: 8,
     },
     volumeLabel: {
-        color: '#fff',
         fontSize: 14,
     },
     volumeButtons: {

@@ -13,7 +13,7 @@ import { scheduleOnRN } from 'react-native-worklets';
 import { styles } from './styles';
 import { AnimatedSliderProps } from './types';
 
-const SLIDER_WIDTH = Dimensions.get('window').width * 0.9;
+const SLIDER_WIDTH = Dimensions.get('window').width * 0.7;
 const THUMB_SIZE = 16;
 const AnimatedText = Animated.createAnimatedComponent(TextInput);
 
@@ -64,7 +64,10 @@ export const AnimatedSlider = memo(({ currentTime, duration, seekTo, isLoading =
 
             // Seek to new position
             scheduleOnRN(seekTo, newTime);
-
+            setTimeout(() => {
+                'worklet';
+                isDragging.value = false;
+            }, 200);
         });
 
     const tap = Gesture.Tap().onStart((event) => {

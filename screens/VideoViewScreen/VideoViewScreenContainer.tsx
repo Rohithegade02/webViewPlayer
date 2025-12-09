@@ -4,7 +4,6 @@ import React from 'react'
 import VideoViewScreenPresentation from './VideoViewScreenPresentation'
 
 const VideoViewScreenContainer = () => {
-    // Multi-video player with all state and controls
     const {
         player,
         currentVideoInfo,
