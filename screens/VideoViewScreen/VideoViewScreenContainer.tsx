@@ -16,6 +16,7 @@ const VideoViewScreenContainer = () => {
         volume,
         currentTime,
         duration,
+        status,
         toggleMute,
         seekTo,
         skipForward,
@@ -34,6 +35,7 @@ const VideoViewScreenContainer = () => {
             volume={volume}
             currentTime={currentTime}
             duration={duration}
+            status={status}
             currentVideoInfo={currentVideoInfo}
             currentIndex={currentIndex}
             totalVideos={totalVideos}

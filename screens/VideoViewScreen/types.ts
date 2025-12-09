@@ -13,6 +13,7 @@ export interface VideoViewScreenProps {
     volume: number;
     currentTime: number;
     duration: number;
+    status: 'idle' | 'loading' | 'readyToPlay' | 'error';
     currentVideoInfo: VideoSourceConfig;
     currentIndex: number;
     totalVideos: number;

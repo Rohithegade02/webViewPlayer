@@ -14,6 +14,7 @@ const VideoViewScreenPresentation = ({
     volume,
     currentTime,
     duration,
+    status,
     currentVideoInfo,
     currentIndex,
     totalVideos,
@@ -73,6 +74,7 @@ const VideoViewScreenPresentation = ({
                 currentTime={currentTime}
                 duration={duration}
                 seekTo={seekTo}
+                isLoading={status === 'loading'}
             />
 
             {/* Playback Controls */}
