@@ -1,5 +1,5 @@
 import { videoSources } from '@/constants'
-import { useMultiVideoPlayer } from '@/hooks/useMultiVideoPlayer'
+import { useVideoPlayerHook } from '@/hooks/useVideoPlayer'
 import React from 'react'
 import VideoViewScreenPresentation from './VideoViewScreenPresentation'
 
@@ -24,7 +24,7 @@ const VideoViewScreenContainer = () => {
         nextVideo,
         previousVideo,
         switchToVideo,
-    } = useMultiVideoPlayer(videoSources);
+    } = useVideoPlayerHook(videoSources);
 
     return (
         <VideoViewScreenPresentation

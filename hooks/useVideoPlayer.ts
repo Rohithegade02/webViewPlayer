@@ -1,118 +1,145 @@
 import { useEvent } from 'expo';
 import { useVideoPlayer, VideoSource } from 'expo-video';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+
+interface VideoSourceConfig {
+    id: string;
+    title: string;
+    uri: string;
+}
 
 /**
- * Custom hook for video playback with caching enabled
- * @param videoUrl - The URL of the video to play
- * @returns Object containing the video player instance, state, and control functions
+ * Custom hook for managing multiple video players with preloading
+ * @param videoSources - Array of video source configurations
+ * @returns Object containing current player, video info, state, and control functions
  */
-export const useVideoHookPlayer = (videoUrl: string) => {
-    // Detect if this is an HLS stream
-    const isHLS = videoUrl.includes('.m3u8');
+export const useVideoPlayerHook = (videoSources: VideoSourceConfig[]) => {
+    // Only preload if there are multiple streams
+    const shouldPreload = videoSources.length > 1;
 
-    // Create a VideoSource object
-    // NOTE: useCaching is NOT supported for HLS streams on iOS due to platform limitations
-    const videoSource: VideoSource = {
-        uri: videoUrl,
-        useCaching: !isHLS, // Only enable caching for non-HLS videos
-        // Explicitly set contentType for HLS streams on iOS
-        ...(isHLS && { contentType: 'hls' }),
+    // Caching function to create VideoSource object
+    const createVideoSource = (uri: string): VideoSource => {
+        const isHLS = uri.includes('.m3u8');
+        return {
+            uri,
+            useCaching: !isHLS,
+            ...(isHLS && { contentType: 'hls' }),
+        };
     };
 
-    const player = useVideoPlayer(videoSource, player => {
-        player.loop = true;
-        player.play();
+    // Create players for all video sources (preloading)
+    const players = videoSources.map((source, index) => {
+        const videoSource = createVideoSource(source.uri);
+        return useVideoPlayer(videoSource, player => {
+            player.loop = true;
+            if (index === 0) {
+                player.play();
+            }
+        });
     });
 
-    // Track playing state with useState for better reactivity
-    const [isPlaying, setIsPlaying] = useState(player.playing);
-    const [muted, setMuted] = useState(player.muted);
-    const [volume, setVolumeState] = useState(player.volume);
+    const [currentIndex, setCurrentIndex] = useState(0);
+    const currentPlayer = players[currentIndex];
+    const currentVideoInfo = videoSources[currentIndex];
+    const [isPlaying, setIsPlaying] = useState(currentPlayer.playing);
+    const [muted, setMuted] = useState(currentPlayer.muted);
+    const [volume, setVolumeState] = useState(currentPlayer.volume);
     const [currentTime, setCurrentTime] = useState(0);
     const [duration, setDuration] = useState(0);
-    const [status, setStatus] = useState(player.status);
+    const [status, setStatus] = useState(currentPlayer.status);
 
-    // Listen to status changes - critical for debugging
-    useEvent(player, 'statusChange', { status: player.status });
+    // Listen to player events
+    useEvent(currentPlayer, 'statusChange', { status: currentPlayer.status });
+    useEvent(currentPlayer, 'playingChange', { isPlaying: currentPlayer.playing });
+    useEvent(currentPlayer, 'mutedChange', { muted: currentPlayer.muted });
+    useEvent(currentPlayer, 'volumeChange', { volume: currentPlayer.volume });
 
-    // Listen to playing state changes
-    useEvent(player, 'playingChange', { isPlaying: player.playing });
-    useEvent(player, 'mutedChange', { muted: player.muted });
-    useEvent(player, 'volumeChange', { volume: player.volume });
-
-    // Log status changes for debugging
-    useEffect(() => {
-        console.log('Player status changed:', player.status);
-        setStatus(player.status);
-
-        // If status is error, log the error
-        if (player.status === 'error') {
-            console.error('Video player error - check network connection and video URL');
-        }
-
-        // If status is readyToPlay, try to play
-        if (player.status === 'readyToPlay' && !player.playing) {
-            console.log('Video ready to play! Duration:', player.duration);
-        }
-    }, [player.status]);
-
-    // Update state when player properties change
+    // Update state values  when player properties change
     useEffect(() => {
         const interval = setInterval(() => {
-            setIsPlaying(player.playing);
-            setMuted(player.muted);
-            setVolumeState(player.volume);
-            setCurrentTime(player.currentTime);
-            setDuration(player.duration);
-            setStatus(player.status);
-        }, 100); // Update every 100ms
+            setIsPlaying(currentPlayer.playing);
+            setMuted(currentPlayer.muted);
+            setVolumeState(currentPlayer.volume);
+            setCurrentTime(currentPlayer.currentTime);
+            setDuration(currentPlayer.duration);
+            setStatus(currentPlayer.status);
+        }, 100);
 
+        //cleanup function of interbal
         return () => clearInterval(interval);
-    }, [player]);
+    }, [currentPlayer]);
 
     /**
      * Toggle mute state
      */
-    const toggleMute = () => {
-        console.log('toggleMute', player.muted);
-        player.muted = !player.muted;
-    };
+    const toggleMute = useCallback(() => {
+        currentPlayer.muted = !currentPlayer.muted;
+    }, [currentPlayer]);
 
     /**
      * Seek to a specific time in seconds
-     * @param seconds - Time position to seek to
      */
-    const seekTo = (seconds: number) => {
-        player.currentTime = seconds;
-    };
+    const seekTo = useCallback((seconds: number) => {
+        currentPlayer.currentTime = seconds;
+    }, [currentPlayer]);
 
     /**
      * Skip forward by a specified number of seconds
-     * @param seconds - Number of seconds to skip forward (default: 10)
      */
-    const skipForward = (seconds: number = 10) => {
-        player.seekBy(seconds);
-    };
+    const skipForward = useCallback((seconds: number = 10) => {
+        currentPlayer.seekBy(seconds);
+    }, [currentPlayer]);
 
     /**
      * Skip backward by a specified number of seconds
-     * @param seconds - Number of seconds to skip backward (default: 10)
      */
-    const skipBackward = (seconds: number = 10) => {
-        player.seekBy(-seconds);
-    };
+    const skipBackward = useCallback((seconds: number = 10) => {
+        currentPlayer.seekBy(-seconds);
+    }, [currentPlayer]);
 
     /**
      * Set volume level
-     * @param value - Volume level between 0 and 1
      */
-    const setVolume = (value: number) => {
-        player.volume = Math.max(0, Math.min(1, value));
-    };
+    const setVolume = useCallback((value: number) => {
+        currentPlayer.volume = Math.max(0, Math.min(1, value));
+    }, [currentPlayer]);
+
+    /**
+     * Switch to a specific video
+     */
+    const switchToVideo = useCallback((index: number) => {
+        if (index < 0 || index >= videoSources.length) {
+            console.warn('Invalid video index:', index);
+            return;
+        }
+
+        players[currentIndex].pause();
+        setCurrentIndex(index);
+        players[index].play();
+    }, [currentIndex, players, videoSources.length]);
+
+    /**
+     * Switch to next video
+     */
+    const nextVideo = useCallback(() => {
+        const nextIndex = (currentIndex + 1) % videoSources.length;
+        switchToVideo(nextIndex);
+    }, [currentIndex, switchToVideo, videoSources.length]);
+
+    /**
+     * Switch to previous video
+     */
+    const previousVideo = useCallback(() => {
+        const prevIndex = currentIndex === 0 ? videoSources.length - 1 : currentIndex - 1;
+        switchToVideo(prevIndex);
+    }, [currentIndex, switchToVideo, videoSources.length]);
 
     return {
-        player,
+        player: currentPlayer,
+        currentVideoInfo,
+        currentIndex,
+        totalVideos: videoSources.length,
+        shouldPreload,
         isPlaying,
         muted,
         volume,
@@ -124,5 +151,8 @@ export const useVideoHookPlayer = (videoUrl: string) => {
         skipForward,
         skipBackward,
         setVolume,
+        switchToVideo,
+        nextVideo,
+        previousVideo,
     };
-}
+};
