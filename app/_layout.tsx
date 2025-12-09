@@ -9,7 +9,10 @@ export default function RootLayout() {
   return (
     <React.Fragment>
       <StatusBar />
-      <Stack />
+      <Stack>
+        <Stack.Screen name="index" options={{ headerShown: false }} />
+        <Stack.Screen name="(main)" options={{ headerShown: false }} />
+      </Stack>
       <PortalHost />
     </React.Fragment>
   )
