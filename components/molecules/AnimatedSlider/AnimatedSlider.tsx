@@ -51,20 +51,20 @@ export const AnimatedSlider = memo(({ currentTime, duration, seekTo, isLoading =
         .onChange((event) => {
             'worklet';
             const newOffset = offset.value + event.changeX;
-            console.log('on chnages');
             offset.value = Math.max(0, Math.min(MAX_VALUE, newOffset));
+            currentTimeShared.value = newOffset / MAX_VALUE * durationShared.value;
         })
         .onEnd(() => {
             'worklet';
             const progress = offset.value / MAX_VALUE;
             const newTime = progress * durationShared.value;
+
+            // Update the shared value immediately for display
+            currentTimeShared.value = newTime;
+
+            // Seek to new position
             scheduleOnRN(seekTo, newTime);
 
-            // Wait a bit before allowing automatic updates again
-            // This prevents the slider from jumping back immediately
-            // setTimeout(() => {
-            //     isDragging.value = false;
-            // }, 100);
         });
 
     const tap = Gesture.Tap().onStart((event) => {
@@ -80,6 +80,10 @@ export const AnimatedSlider = memo(({ currentTime, duration, seekTo, isLoading =
         // Calculate the new time based on tap position
         const progress = targetOffset / MAX_VALUE;
         const newTime = progress * durationShared.value;
+
+        // Update shared value for immediate display
+        currentTimeShared.value = newTime;
+
         scheduleOnRN(seekTo, newTime);
     });
 
@@ -98,9 +102,14 @@ export const AnimatedSlider = memo(({ currentTime, duration, seekTo, isLoading =
     });
 
     const animatedProps = useAnimatedProps(() => {
+        const seconds = currentTimeShared.value;
+        const mins = Math.floor(seconds / 60);
+        const secs = Math.floor(seconds % 60);
+        const timeString = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+
         return {
-            text: `Box width: ${Math.round(offset.value)}`,
-            defaultValue: `Box width: ${offset.value}`,
+            text: timeString,
+            defaultValue: timeString,
         };
     });
 
@@ -108,7 +117,10 @@ export const AnimatedSlider = memo(({ currentTime, duration, seekTo, isLoading =
     return (
         <View style={styles.container}>
             <View style={styles.sliderTrack}>
-                <AnimatedText animatedProps={animatedProps} />
+                <AnimatedText
+                    animatedProps={animatedProps}
+                    style={styles.timeText}
+                />
                 <Animated.View style={[styles.sliderProgress, progressStyle]} />
                 <GestureDetector gesture={composed}>
                     <Animated.View style={[styles.sliderThumb, thumbStyle]} />

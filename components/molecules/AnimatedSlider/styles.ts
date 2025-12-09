@@ -42,4 +42,13 @@ export const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: 'rgba(0, 0, 0, 0.3)',
     },
+    timeText: {
+        position: 'absolute',
+        color: '#fff',
+        fontSize: 14,
+        fontWeight: '600',
+        textAlign: 'center',
+        width: '100%',
+        pointerEvents: 'none',
+    },
 });
