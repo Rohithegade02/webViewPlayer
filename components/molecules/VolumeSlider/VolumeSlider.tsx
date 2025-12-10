@@ -95,7 +95,7 @@ export const VolumeSlider = memo(({ volume, setVolume }: VolumeSliderProps) => {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.label}>🔊 Volume: {Math.round(volume * 100)}%</Text>
+            <Text style={styles.label}> Volume: {Math.round(volume * 100)}%</Text>
             <View style={styles.sliderTrack}>
                 <Animated.View style={[styles.sliderProgress, progressStyle]} />
                 <GestureDetector gesture={composed}>

@@ -1,9 +1,14 @@
 import { videoSources } from '@/constants'
 import { useVideoPlayerHook } from '@/hooks/useVideoPlayer'
-import React from 'react'
+import React, { useCallback, useState } from 'react'
 import VideoViewScreenPresentation from './VideoViewScreenPresentation'
 
 const VideoViewScreenContainer = () => {
+    const [showControls, setShowControls] = useState<boolean>(true);
+
+    const toggleControls = useCallback(() => {
+        setShowControls(!showControls);
+    }, [showControls]);
     const {
         player,
         currentVideoInfo,
@@ -31,6 +36,8 @@ const VideoViewScreenContainer = () => {
             player={player}
             isPlaying={isPlaying}
             muted={muted}
+            showControls={showControls}
+            toggleControls={toggleControls}
             volume={volume}
             currentTime={currentTime}
             duration={duration}

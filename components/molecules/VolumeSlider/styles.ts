@@ -3,10 +3,11 @@ import { Dimensions, StyleSheet } from "react-native";
 
 const SLIDER_WIDTH = Dimensions.get('window').width * 0.7;
 const THUMB_SIZE = 20;
-
+const HEIGHT = Dimensions.get('window').height;
 export const styles = StyleSheet.create({
     container: {
         width: '100%',
+
         paddingHorizontal: 20,
         marginTop: 16,
         alignItems: 'center',
@@ -18,8 +19,8 @@ export const styles = StyleSheet.create({
         color: Colors.light.text,
     },
     sliderTrack: {
-        width: SLIDER_WIDTH,
-        height: 10,
+        width: 10,
+        height: HEIGHT * 0.2,
         backgroundColor: Colors.light.volumeTrack,
         borderRadius: 4,
         justifyContent: 'center',
@@ -35,13 +36,13 @@ export const styles = StyleSheet.create({
     sliderThumb: {
         width: THUMB_SIZE,
         height: THUMB_SIZE,
-        backgroundColor: Colors.light.sliderThumb,
+        backgroundColor: Colors.light.background,
         borderRadius: THUMB_SIZE / 2,
         position: 'absolute',
         top: -6,
         borderWidth: 2,
-        borderColor: Colors.light.accent,
-        shadowColor: Colors.light.text,
+        borderColor: Colors.light.background,
+        shadowColor: Colors.light.background,
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.25,
         shadowRadius: 3.84,

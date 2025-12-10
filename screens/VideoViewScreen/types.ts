@@ -26,4 +26,7 @@ export interface VideoViewScreenProps {
     nextVideo: () => void;
     previousVideo: () => void;
     switchToVideo: (index: number) => void;
+    showControls: boolean;
+    toggleControls: () => void;
+
 }

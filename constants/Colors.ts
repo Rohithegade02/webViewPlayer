@@ -25,6 +25,8 @@ export const Colors = {
         sliderThumb: '#ffffff',
         loadingOverlay: 'rgba(0, 0, 0, 0.3)',
         volumeTrack: '#dddddd',
+        videoOverlay: 'rgba(0, 0, 0, 0.4)',
+        videoControlsBackground: 'rgba(0, 0, 0, 0.6)',
     },
     dark: {
         // Placeholder for dark mode if needed

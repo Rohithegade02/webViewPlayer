@@ -1,10 +1,12 @@
-import { Button, Text } from '@/components/atoms'
+import { Button, Icon, Text } from '@/components/atoms'
 import { AnimatedSlider, VolumeSlider } from '@/components/molecules'
+import { Colors } from '@/constants'
 import { formatTime } from '@/lib/formaTime'
 import { VideoView } from 'expo-video'
 import React from 'react'
-import { StyleSheet, View } from 'react-native'
+import { Pressable, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import { styles } from './styles'
 import { VideoViewScreenProps } from './types'
 
 const VideoViewScreenPresentation = ({
@@ -25,185 +27,117 @@ const VideoViewScreenPresentation = ({
     setVolume,
     nextVideo,
     previousVideo,
-    switchToVideo
+    showControls,
+    toggleControls
 }: VideoViewScreenProps) => {
-    console.log('volume', Math.round(volume * 100));
+
+
     return (
-        <SafeAreaView style={styles.contentContainer}>
-            {/* Video Info Header */}
-            <View style={styles.videoInfoContainer}>
-                <Text style={styles.videoTitle}>{currentVideoInfo.title}</Text>
-                <Text style={styles.videoCounter}>
-                    Video {currentIndex + 1} of {totalVideos}
-                </Text>
+        <SafeAreaView style={styles.container}>
+            {/* Header Content */}
+            <View style={styles.headerContainer}>
+                <Text style={styles.headerTitle}>{currentVideoInfo.title}</Text>
+                <Text style={styles.headerSubtitle}>Video {currentIndex + 1} of {totalVideos}</Text>
             </View>
 
-            {/* Video Switching Controls */}
-            {totalVideos > 1 && (
-                <View style={styles.switchControlsContainer}>
-                    <Button onPress={previousVideo}>
-                        <Text>⏮️ Previous</Text>
-                    </Button>
-                    <Button onPress={nextVideo}>
-                        <Text>Next ⏭️</Text>
-                    </Button>
+            {/* Video Player Container */}
+            <View style={styles.videoContainer}>
+                <Pressable style={styles.videoWrapper} onPress={toggleControls}>
+                    <VideoView
+                        style={styles.video}
+                        player={player}
+                        allowsPictureInPicture
+                        contentFit={'contain'}
+                        onFullscreenExit={() => player.pause()}
+                        nativeControls={false}
+                    />
+
+                    {/* Controls Overlay */}
+                    {showControls && (
+                        <View style={styles.overlay}>
+                            {/* Center Controls */}
+                            <View style={styles.centerControls}>
+                                {/* Previous Video */}
+                                {totalVideos > 1 && (
+                                    <Button variant="ghost" size="icon" onPress={previousVideo} disabled={currentIndex === 0}>
+                                        <Icon name="skip-previous" type="MaterialIcons" size={32} color={Colors.light.textInverse} />
+                                    </Button>
+                                )}
+
+                                {/* Skip Backward */}
+                                <Button variant="ghost" size="icon" onPress={() => skipBackward(10)}>
+                                    <Icon name="replay-10" type="MaterialIcons" size={28} color={Colors.light.textInverse} />
+                                </Button>
+
+                                {/* Play/Pause */}
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    style={styles.playButton}
+                                    onPress={() => isPlaying ? player.pause() : player.play()}
+                                >
+                                    <Icon
+                                        name={isPlaying ? "pause-circle-filled" : "play-circle-filled"}
+                                        type="MaterialIcons"
+                                        size={64}
+                                        color={Colors.light.textInverse}
+                                    />
+                                </Button>
+
+                                {/* Skip Forward */}
+                                <Button variant="ghost" size="icon" onPress={() => skipForward(10)}>
+                                    <Icon name="forward-10" type="MaterialIcons" size={28} color={Colors.light.textInverse} />
+                                </Button>
+
+                                {/* Next Video */}
+                                {totalVideos > 1 && (
+                                    <Button variant="ghost" size="icon" onPress={nextVideo} disabled={currentIndex === totalVideos - 1}>
+                                        <Icon name="skip-next" type="MaterialIcons" size={32} color={Colors.light.textInverse} />
+                                    </Button>
+                                )}
+                            </View>
+                        </View>
+                    )}
+                </Pressable>
+            </View>
+
+            {/* Bottom Controls (Below Video) */}
+            <View style={styles.bottomControlsContainer}>
+                {/* Seek Slider (Full Width) */}
+                <View style={styles.sliderContainer}>
+                    <AnimatedSlider
+                        currentTime={currentTime}
+                        duration={duration}
+                        seekTo={seekTo}
+                        isLoading={status === 'loading'}
+                    />
+                    <View style={styles.timeRow}>
+                        <Text style={styles.timeText}>{formatTime(currentTime)}</Text>
+                        <Text style={styles.timeText}> / {formatTime(duration)}</Text>
+                    </View>
                 </View>
-            )}
 
-            {/* Video Player */}
-            <VideoView
-                style={styles.video}
-                player={player}
-                allowsPictureInPicture
-                contentFit={'contain'}
-                onFullscreenExit={() => player.pause()}
-                nativeControls={false}
-                fullscreenOptions={{
-                    enable: true
-                }}
-            />
-
-            {/* Time Display */}
-            <View style={styles.timeContainer}>
-                <Text style={styles.timeText}>{formatTime(currentTime)}</Text>
-                <Text style={styles.timeText}>/</Text>
-                <Text style={styles.timeText}>{formatTime(duration)}</Text>
+                {/* Volume Controls Row */}
+                <View style={styles.controlsRow}>
+                    <View style={styles.volumeControl}>
+                        <Button variant="ghost" size="icon" onPress={toggleMute}>
+                            {/* <Icon
+                                name={muted ? "volume-off" : volume > 0.5 ? "volume-up" : "volume-down"}
+                                type="MaterialIcons"
+                                size={24}
+                                color={Colors.light.text}
+                            /> */}
+                        </Button>
+                        <View style={{ flex: 1 }}>
+                            <VolumeSlider volume={volume} setVolume={setVolume} />
+                        </View>
+                    </View>
+                </View>
             </View>
-
-            {/* Animated Seek Slider */}
-            <AnimatedSlider
-                currentTime={currentTime}
-                duration={duration}
-                seekTo={seekTo}
-                isLoading={status === 'loading'}
-            />
-
-            {/* Playback Controls */}
-            <View style={styles.controlsContainer}>
-                {/* Skip Backward */}
-                <Button onPress={() => skipBackward(10)}>
-                    <Text>⏪ -10s</Text>
-                </Button>
-
-                {/* Play/Pause */}
-                <Button
-                    onPress={() => {
-                        console.log('isPlaying', isPlaying);
-                        if (isPlaying) {
-                            player.pause();
-                        } else {
-                            player.play();
-                        }
-                    }}
-                >
-                    <Text>{isPlaying ? '⏸️ Pause' : '▶️ Play'}</Text>
-                </Button>
-
-                {/* Skip Forward */}
-                <Button onPress={() => skipForward(10)}>
-                    <Text>⏩ +10s</Text>
-                </Button>
-            </View>
-
-            {/* Volume and Mute Controls */}
-            <View style={styles.volumeContainer}>
-                {/* Mute Toggle */}
-                <Button onPress={toggleMute}>
-                    <Text>{muted ? '🔇 Unmute' : '🔊 Mute'}</Text>
-                </Button>
-            </View>
-            <VolumeSlider volume={volume} setVolume={setVolume} />
         </SafeAreaView>
     );
 };
 
-const styles = StyleSheet.create({
-    contentContainer: {
-        flex: 1,
-        padding: 10,
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    videoInfoContainer: {
-        width: '100%',
-        paddingHorizontal: 20,
-        paddingVertical: 12,
-        backgroundColor: '#1a1a1a',
-        borderRadius: 12,
-        marginBottom: 12,
-        alignItems: 'center',
-    },
-    videoTitle: {
-        color: '#fff',
-        fontSize: 18,
-        fontWeight: 'bold',
-        marginBottom: 4,
-    },
-    videoCounter: {
-        color: '#aaa',
-        fontSize: 14,
-        marginBottom: 4,
-    },
-    preloadIndicator: {
-        color: '#4CAF50',
-        fontSize: 12,
-        fontWeight: '600',
-    },
-    switchControlsContainer: {
-        flexDirection: 'row',
-        gap: 16,
-        marginBottom: 12,
-    },
-    video: {
-        width: 350,
-        height: 275,
-        backgroundColor: '#000',
-    },
-    statusContainer: {
-        marginTop: 12,
-        paddingHorizontal: 16,
-        paddingVertical: 8,
-        backgroundColor: '#333',
-        borderRadius: 8,
-    },
-    statusText: {
-        color: '#fff',
-        fontSize: 14,
-        fontWeight: '600',
-    },
-    timeContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 8,
-        marginTop: 16,
-    },
-    timeText: {
-        color: '#000',
-        fontSize: 16,
-        fontWeight: '600',
-    },
-    controlsContainer: {
-        flexDirection: 'row',
-        gap: 12,
-        marginTop: 20,
-        alignItems: 'center',
-    },
-    volumeContainer: {
-        marginTop: 20,
-        alignItems: 'center',
-        gap: 12,
-    },
-    volumeSliderContainer: {
-        alignItems: 'center',
-        gap: 8,
-    },
-    volumeLabel: {
-        fontSize: 14,
-    },
-    volumeButtons: {
-        flexDirection: 'row',
-        gap: 12,
-    },
-});
+
 
 export default VideoViewScreenPresentation
