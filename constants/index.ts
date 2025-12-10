@@ -23,3 +23,5 @@ export const videoSource = videoSources[0].uri;
  * Webview URL
  */
 export const webviewUrl = 'https://next-potfolio-zeta.vercel.app/';
+
+export * from './Colors';

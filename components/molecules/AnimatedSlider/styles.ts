@@ -1,3 +1,4 @@
+import { Colors } from "@/constants";
 import { Dimensions, StyleSheet } from "react-native";
 
 const SLIDER_WIDTH = Dimensions.get('window').width * 0.7;
@@ -12,7 +13,7 @@ export const styles = StyleSheet.create({
     sliderTrack: {
         width: SLIDER_WIDTH,
         height: 40,
-        backgroundColor: '#333',
+        backgroundColor: Colors.light.sliderTrack,
         borderRadius: 4,
         justifyContent: 'center',
         overflow: 'hidden',
@@ -22,12 +23,12 @@ export const styles = StyleSheet.create({
         left: 0,
         top: 0,
         bottom: 0,
-        backgroundColor: '#1E90FF',
+        backgroundColor: Colors.light.accent,
     },
     sliderThumb: {
         width: THUMB_SIZE,
         height: THUMB_SIZE,
-        backgroundColor: '#fff',
+        backgroundColor: Colors.light.sliderThumb,
         borderRadius: THUMB_SIZE / 2,
         position: 'absolute',
         top: 12,
@@ -40,11 +41,11 @@ export const styles = StyleSheet.create({
         bottom: 0,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: 'rgba(0, 0, 0, 0.3)',
+        backgroundColor: Colors.light.loadingOverlay,
     },
     timeText: {
         position: 'absolute',
-        color: '#fff',
+        color: Colors.light.textInverse,
         fontSize: 14,
         fontWeight: '600',
         textAlign: 'center',
@@ -52,3 +53,4 @@ export const styles = StyleSheet.create({
         pointerEvents: 'none',
     },
 });
+
