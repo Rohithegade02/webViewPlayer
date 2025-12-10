@@ -1,7 +1,7 @@
-import { Button, Text } from '@/components/atoms';
+import { Button, Icon } from '@/components/atoms';
 import { webviewUrl } from '@/constants';
 import React, { useRef } from 'react';
-import { ActivityIndicator, useWindowDimensions, View } from 'react-native';
+import { ActivityIndicator, Text, useWindowDimensions, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { WebView } from 'react-native-webview';
 import { styles } from './styles';
@@ -13,7 +13,7 @@ const WebViewScreenPresentation = ({
     scheduleWebViewFinishedLoading,
     handleVideoPlayerScreen
 }: WebViewScreenProps) => {
-    const { height, width } = useWindowDimensions();
+    const { height } = useWindowDimensions();
     const { top } = useSafeAreaInsets();
     const hasNotified = useRef(false);
 
@@ -25,32 +25,62 @@ const WebViewScreenPresentation = ({
     };
 
     return (
-        <View style={{ flex: 1, paddingTop: top }}>
-            <View style={{ height: height * 0.78 }}>
+        <View style={[styles.container, { paddingTop: top }]}>
+            {/* WebView Card */}
+            <View style={[styles.webviewContainer, { height: height * 0.70 }]}>
                 <WebView
                     source={{ uri: webviewUrl }}
                     startInLoadingState={true}
                     renderLoading={() => (
-                        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                            <ActivityIndicator size="large" color="lightskyblue" />
+                        <View style={styles.loadingContainer}>
+                            <ActivityIndicator size="large" color="#0f172a" />
                         </View>
                     )}
                     onLoadEnd={handleLoadEnd}
                 />
             </View>
-            <View className='flex flex-row gap-4 mt-5 justify-between'>
-                <Button style={styles.button} onPress={scheduleNotification1}>
-                    <Text style={styles.buttonText}>Mail Notification (2s)</Text>
-                </Button>
-                <Button style={styles.button} onPress={scheduleNotification2}>
-                    <Text style={styles.buttonText}>Update Notification (5s)</Text>
+
+            {/* Controls Area */}
+            <View style={styles.controlsContainer}>
+                {/* Notification Buttons Row */}
+                <View style={styles.rowContainer}>
+                    <Button
+                        style={({ pressed }) => [
+                            styles.actionButton,
+                            pressed && { opacity: 0.9, transform: [{ scale: 0.98 }] }
+                        ]}
+                        onPress={scheduleNotification1}
+                    >
+                        <Icon name="notifications" type="MaterialIcons" size={20} color="#334155" />
+                        <Text style={styles.buttonLabel}>Notification (2s)</Text>
+                    </Button>
+
+                    <Button
+                        style={({ pressed }) => [
+                            styles.actionButton,
+                            pressed && { opacity: 0.9, transform: [{ scale: 0.98 }] }
+                        ]}
+                        onPress={scheduleNotification2}
+                    >
+                        <Icon name="notifications-paused" type="MaterialIcons" size={20} color="#334155" />
+                        <Text style={styles.buttonLabel}>Notification (5s)</Text>
+                    </Button>
+                </View>
+
+                {/* Main Action Button */}
+                <Button
+                    style={({ pressed }) => [
+                        styles.primaryButton,
+                        pressed && { opacity: 0.95, transform: [{ scale: 0.99 }] }
+                    ]}
+                    onPress={handleVideoPlayerScreen}
+                >
+                    <Icon name="play-circle" size={24} color="#fff" />
+                    <Text style={styles.primaryButtonLabel}>Open Video Player</Text>
                 </Button>
             </View>
-            <Button style={styles.buttonContainer} onPress={handleVideoPlayerScreen}>
-                <Text style={[styles.buttonText, { fontSize: 16, color: '#000' }]}>Open a Video Player Screen</Text>
-            </Button>
         </View>
     );
 };
 
-export default WebViewScreenPresentation
+export default WebViewScreenPresentation;
