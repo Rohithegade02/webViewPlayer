@@ -4,6 +4,8 @@ import { Dimensions, StyleSheet } from "react-native";
 const SLIDER_WIDTH = Dimensions.get('window').width * 0.7;
 const THUMB_SIZE = 20;
 const HEIGHT = Dimensions.get('window').height;
+const SLIDER_HEIGHT = HEIGHT * 0.2;
+
 export const styles = StyleSheet.create({
     container: {
         width: '100%',
@@ -20,18 +22,19 @@ export const styles = StyleSheet.create({
     },
     sliderTrack: {
         width: 10,
-        height: HEIGHT * 0.2,
+        height: SLIDER_HEIGHT,
         backgroundColor: Colors.light.volumeTrack,
         borderRadius: 4,
         justifyContent: 'center',
-        overflow: 'hidden',
+        overflow: 'visible',
     },
     sliderProgress: {
         position: 'absolute',
         left: 0,
-        top: 0,
+        right: 0,
         bottom: 0,
         backgroundColor: Colors.light.accent,
+        borderRadius: 4,
     },
     sliderThumb: {
         width: THUMB_SIZE,
@@ -39,8 +42,9 @@ export const styles = StyleSheet.create({
         backgroundColor: Colors.light.background,
         borderRadius: THUMB_SIZE / 2,
         position: 'absolute',
-        top: -6,
-        borderWidth: 2,
+        top: 0,
+        left: '50%',
+        marginLeft: -THUMB_SIZE / 2,
         borderColor: Colors.light.background,
         shadowColor: Colors.light.background,
         shadowOffset: { width: 0, height: 2 },
@@ -63,3 +67,4 @@ export const styles = StyleSheet.create({
 
 export const SLIDER_WIDTH_EXPORT = SLIDER_WIDTH;
 export const THUMB_SIZE_EXPORT = THUMB_SIZE;
+export const SLIDER_HEIGHT_EXPORT = SLIDER_HEIGHT;

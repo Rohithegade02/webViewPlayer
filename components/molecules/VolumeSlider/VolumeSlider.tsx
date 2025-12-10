@@ -9,16 +9,16 @@ import Animated, {
     withTiming
 } from 'react-native-reanimated';
 import { scheduleOnRN } from 'react-native-worklets';
-import { SLIDER_WIDTH_EXPORT, styles, THUMB_SIZE_EXPORT } from './styles';
+import { SLIDER_HEIGHT_EXPORT, styles, THUMB_SIZE_EXPORT } from './styles';
 import { VolumeSliderProps } from './types';
 
-const SLIDER_WIDTH = SLIDER_WIDTH_EXPORT;
+const SLIDER_HEIGHT = SLIDER_HEIGHT_EXPORT;
 const THUMB_SIZE = THUMB_SIZE_EXPORT;
 
 export const VolumeSlider = memo(({ volume, setVolume }: VolumeSliderProps) => {
     const offset = useSharedValue<number>(0);
     const isDragging = useSharedValue(false);
-    const MAX_VALUE = SLIDER_WIDTH - THUMB_SIZE;
+    const MAX_VALUE = SLIDER_HEIGHT - THUMB_SIZE;
     const volumeShared = useSharedValue(volume);
 
     // Update shared value when prop changes
@@ -30,7 +30,9 @@ export const VolumeSlider = memo(({ volume, setVolume }: VolumeSliderProps) => {
     useDerivedValue(() => {
         'worklet';
         if (!isDragging.value) {
-            const targetOffset = volumeShared.value * MAX_VALUE;
+            // 0 volume = MAX_VALUE offset (bottom)
+            // 1 volume = 0 offset (top)
+            const targetOffset = (1 - volumeShared.value) * MAX_VALUE;
             offset.value = withTiming(targetOffset, {
                 duration: 100,
             });
@@ -44,14 +46,14 @@ export const VolumeSlider = memo(({ volume, setVolume }: VolumeSliderProps) => {
         })
         .onChange((event) => {
             'worklet';
-            const newOffset = offset.value + event.changeX;
+            const newOffset = offset.value + event.changeY;
             offset.value = Math.max(0, Math.min(MAX_VALUE, newOffset));
             // Update volume in real-time as you drag
-            volumeShared.value = offset.value / MAX_VALUE;
+            volumeShared.value = 1 - (offset.value / MAX_VALUE);
         })
         .onEnd(() => {
             'worklet';
-            const newVolume = offset.value / MAX_VALUE;
+            const newVolume = 1 - (offset.value / MAX_VALUE);
             volumeShared.value = newVolume;
 
             // Set volume
@@ -65,15 +67,15 @@ export const VolumeSlider = memo(({ volume, setVolume }: VolumeSliderProps) => {
 
     const tap = Gesture.Tap().onStart((event) => {
         'worklet';
-        const tapX = event.x - THUMB_SIZE / 2;
-        const targetOffset = Math.max(0, Math.min(MAX_VALUE, tapX));
+        const tapY = event.y - THUMB_SIZE / 2;
+        const targetOffset = Math.max(0, Math.min(MAX_VALUE, tapY));
 
         offset.value = withSpring(targetOffset, {
             damping: 20,
             stiffness: 90,
         });
 
-        const newVolume = targetOffset / MAX_VALUE;
+        const newVolume = 1 - (targetOffset / MAX_VALUE);
         volumeShared.value = newVolume;
 
         scheduleOnRN(setVolume, newVolume);
@@ -83,13 +85,21 @@ export const VolumeSlider = memo(({ volume, setVolume }: VolumeSliderProps) => {
 
     const thumbStyle = useAnimatedStyle(() => {
         return {
-            transform: [{ translateX: offset.value }],
+            transform: [{ translateY: offset.value }],
         };
     });
 
     const progressStyle = useAnimatedStyle(() => {
+        // Height based on volume
+        // Since offset goes 0 -> MAX, volume goes 1 -> 0
+        // We want height to be related to SLIDER_HEIGHT maybe? 
+        // Or simply: height from bottom up.
+        // If offset is 0 (top), height is full.
+        // If offset is MAX (bottom), height is minimal/0.
+        // height = SLIDER_HEIGHT - offset.value (approx, or adjusting for thumb)
+        // Or simpler: height = volumeShared.value * SLIDER_HEIGHT
         return {
-            width: offset.value + THUMB_SIZE / 2,
+            height: `${volumeShared.value * 100}%`,
         };
     });
 
@@ -107,3 +117,4 @@ export const VolumeSlider = memo(({ volume, setVolume }: VolumeSliderProps) => {
 });
 
 VolumeSlider.displayName = 'VolumeSlider';
+
