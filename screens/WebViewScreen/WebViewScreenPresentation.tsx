@@ -1,13 +1,26 @@
 import { Button, Text } from '@/components/atoms';
-import { useNotifications } from '@/hooks/useNotifications';
-import React from 'react';
+import React, { useRef } from 'react';
 import { ActivityIndicator, useWindowDimensions, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { WebView } from 'react-native-webview';
+import { WebViewScreenProps } from './types';
 
-const WebViewScreenPresentation = () => {
+const WebViewScreenPresentation = ({
+    scheduleNotification1,
+    scheduleNotification2,
+    scheduleWebViewFinishedLoading,
+    handleVideoPlayerScreen
+}: WebViewScreenProps) => {
     const { height } = useWindowDimensions();
-    const { scheduleNotification1, scheduleNotification2 } = useNotifications();
+    const hasNotified = useRef(false);
+
+    const handleLoadEnd = () => {
+        // Only send notification once
+        if (!hasNotified.current) {
+            hasNotified.current = true;
+            scheduleWebViewFinishedLoading();
+        }
+    };
 
     return (
         <SafeAreaView style={{ flex: 1 }}>
@@ -21,6 +34,7 @@ const WebViewScreenPresentation = () => {
                         </View>
                     )}
                     style={{ height: 400 }}
+                    onLoadEnd={handleLoadEnd}
                 />
             </View>
             <View className='flex flex-row justify-between px-6 bg-yellow-200'>
@@ -31,6 +45,9 @@ const WebViewScreenPresentation = () => {
                     <Text>Update Notification (5s)</Text>
                 </Button>
             </View>
+            <Button onPress={handleVideoPlayerScreen}>
+                <Text>Open a Video Player Screen</Text>
+            </Button>
         </SafeAreaView>
     );
 };

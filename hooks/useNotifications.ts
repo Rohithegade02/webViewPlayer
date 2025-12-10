@@ -2,6 +2,13 @@ import * as Notifications from 'expo-notifications';
 import { useEffect } from 'react';
 import { Platform } from 'react-native';
 
+interface NotificationProps {
+    title: string;
+    body: string;
+    data: Record<string, unknown> | undefined;
+    seconds?: number;
+}
+
 Notifications.setNotificationHandler({
     handleNotification: async () => ({
         shouldPlaySound: false,
@@ -37,41 +44,32 @@ async function registerForPushNotificationsAsync() {
     return true;
 }
 
-export const useNotifications = () => {
+export const useNotifications = (
+    { title,
+        body,
+        data,
+        seconds,
+    }: NotificationProps
+) => {
     useEffect(() => {
         registerForPushNotificationsAsync();
     }, []);
 
-    const scheduleNotification1 = async () => {
+    const scheduleNotification = async () => {
         await Notifications.scheduleNotificationAsync({
             content: {
-                title: "You've got mail! 📬",
-                body: 'Check out your new messages from the portfolio website!',
-                data: { notificationType: 'mail', source: 'webview' },
+                title,
+                body,
+                data,
             },
-            trigger: {
+            trigger: seconds ? {
                 type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
-                seconds: 2,
-            },
-        });
-    };
-
-    const scheduleNotification2 = async () => {
-        await Notifications.scheduleNotificationAsync({
-            content: {
-                title: "Portfolio Update! 🚀",
-                body: 'New projects and achievements have been added to the portfolio.',
-                data: { notificationType: 'update', source: 'webview' },
-            },
-            trigger: {
-                type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
-                seconds: 5,
-            },
+                seconds,
+            } : null,
         });
     };
 
     return {
-        scheduleNotification1,
-        scheduleNotification2,
+        scheduleNotification,
     };
 }
