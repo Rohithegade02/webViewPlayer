@@ -71,6 +71,13 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
-    }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "ce1b5dac-95bc-4db3-baea-12f31fd48022"
+      }
+    },
+    "owner": "rohithegade8"
   }
 }

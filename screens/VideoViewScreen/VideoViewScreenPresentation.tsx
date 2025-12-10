@@ -1,10 +1,10 @@
-import { Button, Icon, Text } from '@/components/atoms'
+import { Button, Icon } from '@/components/atoms'
 import { AnimatedSlider, VolumeSlider } from '@/components/molecules'
 import { Colors } from '@/constants'
 import { formatTime } from '@/lib/formaTime'
 import { VideoView } from 'expo-video'
-import React from 'react'
-import { Pressable, View } from 'react-native'
+import React, { useRef, useState } from 'react'
+import { Pressable, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { styles } from './styles'
 import { VideoViewScreenProps } from './types'
@@ -30,7 +30,14 @@ const VideoViewScreenPresentation = ({
     showControls,
     toggleControls
 }: VideoViewScreenProps) => {
+    const videoViewRef = useRef<VideoView>(null);
+    const [isNativeFullscreen, setIsNativeFullscreen] = useState(false);
 
+    const toggleFullscreen = () => {
+        if (videoViewRef.current) {
+            videoViewRef.current.enterFullscreen();
+        }
+    };
 
     return (
         <SafeAreaView style={styles.container}>
@@ -44,17 +51,26 @@ const VideoViewScreenPresentation = ({
             <View style={styles.videoContainer}>
                 <Pressable style={styles.videoWrapper} onPress={toggleControls}>
                     <VideoView
+                        ref={videoViewRef}
                         style={styles.video}
                         player={player}
                         allowsPictureInPicture
                         contentFit={'contain'}
-                        onFullscreenExit={() => player.pause()}
-                        nativeControls={false}
+                        onFullscreenEnter={() => setIsNativeFullscreen(true)}
+                        onFullscreenExit={() => setIsNativeFullscreen(false)}
+                        nativeControls={isNativeFullscreen}
                     />
 
-                    {/* Controls Overlay */}
-                    {showControls && (
+                    {/* Controls Overlay (Only show if NOT in native fullscreen) */}
+                    {showControls && !isNativeFullscreen && (
                         <View style={styles.overlay}>
+                            {/* Fullscreen Button (Top Right) */}
+                            <View style={{ position: 'absolute', top: 10, right: 10 }}>
+                                <Button variant="ghost" size="icon" onPress={toggleFullscreen}>
+                                    <Icon name="fullscreen" type="MaterialIcons" size={28} color={Colors.light.textInverse} />
+                                </Button>
+                            </View>
+
                             {/* Center Controls */}
                             <View style={styles.centerControls}>
                                 {/* Previous Video */}
@@ -128,7 +144,7 @@ const VideoViewScreenPresentation = ({
                                 color={Colors.light.text}
                             /> */}
                         </Button>
-                        <View style={{ flex: 1 }}>
+                        <View style={{ flex: 1 }} onLayout={(e) => e.stopPropagation()}>
                             <VolumeSlider volume={volume} setVolume={setVolume} />
                         </View>
                     </View>
