@@ -1,8 +1,10 @@
 import { Button, Text } from '@/components/atoms';
+import { webviewUrl } from '@/constants';
 import React, { useRef } from 'react';
 import { ActivityIndicator, useWindowDimensions, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { WebView } from 'react-native-webview';
+import { styles } from './styles';
 import { WebViewScreenProps } from './types';
 
 const WebViewScreenPresentation = ({
@@ -11,11 +13,11 @@ const WebViewScreenPresentation = ({
     scheduleWebViewFinishedLoading,
     handleVideoPlayerScreen
 }: WebViewScreenProps) => {
-    const { height } = useWindowDimensions();
+    const { height, width } = useWindowDimensions();
+    const { top } = useSafeAreaInsets();
     const hasNotified = useRef(false);
 
     const handleLoadEnd = () => {
-        // Only send notification once
         if (!hasNotified.current) {
             hasNotified.current = true;
             scheduleWebViewFinishedLoading();
@@ -23,32 +25,31 @@ const WebViewScreenPresentation = ({
     };
 
     return (
-        <SafeAreaView style={{ flex: 1 }}>
-            <View style={{ height: height * 0.8 }}>
+        <View style={{ flex: 1, paddingTop: top }}>
+            <View style={{ height: height * 0.78 }}>
                 <WebView
-                    source={{ uri: 'https://next-potfolio-zeta.vercel.app/' }}
+                    source={{ uri: webviewUrl }}
                     startInLoadingState={true}
                     renderLoading={() => (
                         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
                             <ActivityIndicator size="large" color="lightskyblue" />
                         </View>
                     )}
-                    style={{ height: 400 }}
                     onLoadEnd={handleLoadEnd}
                 />
             </View>
-            <View className='flex flex-row justify-between px-6 bg-yellow-200'>
-                <Button onPress={scheduleNotification1}>
-                    <Text>Mail Notification (2s)</Text>
+            <View className='flex flex-row gap-4 mt-5 justify-between'>
+                <Button style={styles.button} onPress={scheduleNotification1}>
+                    <Text style={styles.buttonText}>Mail Notification (2s)</Text>
                 </Button>
-                <Button onPress={scheduleNotification2}>
-                    <Text>Update Notification (5s)</Text>
+                <Button style={styles.button} onPress={scheduleNotification2}>
+                    <Text style={styles.buttonText}>Update Notification (5s)</Text>
                 </Button>
             </View>
-            <Button onPress={handleVideoPlayerScreen}>
-                <Text>Open a Video Player Screen</Text>
+            <Button style={styles.buttonContainer} onPress={handleVideoPlayerScreen}>
+                <Text style={[styles.buttonText, { fontSize: 16, color: '#000' }]}>Open a Video Player Screen</Text>
             </Button>
-        </SafeAreaView>
+        </View>
     );
 };
 

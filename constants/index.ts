@@ -17,3 +17,9 @@ export const videoSources = [
 
 // For backward compatibility
 export const videoSource = videoSources[0].uri;
+
+
+/**
+ * Webview URL
+ */
+export const webviewUrl = 'https://next-potfolio-zeta.vercel.app/';
