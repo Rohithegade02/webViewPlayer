@@ -30,3 +30,30 @@ export interface VideoViewScreenProps {
     toggleControls: () => void;
 
 }
+
+export interface VideoViewScreenHeaderProps {
+    currentVideoInfo: VideoSourceConfig;
+    currentIndex: number;
+    totalVideos: number;
+}
+
+export interface VideoViewScreenCustomControllerProps {
+    toggleFullscreen: () => void;
+    totalVideos: number;
+    currentIndex: number;
+    previousVideo: () => void;
+    skipBackward: (seconds?: number) => void;
+    skipForward: (seconds?: number) => void;
+    nextVideo: () => void;
+    isPlaying: boolean;
+    player: VideoPlayer;
+}
+
+export interface VideoViewBottomControllerProps {
+    currentTime: number;
+    duration: number;
+    seekTo: (seconds: number) => void;
+    status: 'idle' | 'loading' | 'readyToPlay' | 'error';
+    volume: number;
+    setVolume: (value: number) => void;
+}

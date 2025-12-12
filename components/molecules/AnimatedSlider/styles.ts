@@ -6,14 +6,12 @@ const THUMB_SIZE = 16;
 
 export const styles = StyleSheet.create({
     container: {
-        width: '100%',
-        paddingHorizontal: 20,
         marginTop: 12,
     },
     sliderTrack: {
-        width: SLIDER_WIDTH,
+        width: '100%',
         height: 40,
-        backgroundColor: Colors.light.sliderTrack,
+        backgroundColor: Colors.light.textSecondary,
         borderRadius: 4,
         justifyContent: 'center',
         overflow: 'hidden',
@@ -23,7 +21,7 @@ export const styles = StyleSheet.create({
         left: 0,
         top: 0,
         bottom: 0,
-        backgroundColor: Colors.light.accent,
+        backgroundColor: Colors.light.volumeTrack,
     },
     sliderThumb: {
         width: THUMB_SIZE,

@@ -32,9 +32,9 @@ export const useVideoPlayerHook = (videoSources: VideoSourceConfig[]) => {
         const videoSource = createVideoSource(source.uri);
         return useVideoPlayer(videoSource, player => {
             player.loop = true;
-            if (index === 0) {
-                player.play();
-            }
+            // if (index === 0) {
+            //     player.play();
+            // }
         });
     });
 

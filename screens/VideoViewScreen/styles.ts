@@ -48,32 +48,30 @@ export const styles = StyleSheet.create({
         height: 80,
     },
     bottomControlsContainer: {
-        padding: 16,
-        gap: 16,
-    },
-    sliderContainer: {
+        paddingVertical: 16,
+        paddingHorizontal: 8,
         gap: 8,
+    },
+    slidersRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    seekSliderWrapper: {
+        flex: 1,
+    },
+    volumeSliderWrapper: {
+        width: 110,
+        justifyContent: 'center',
+        marginLeft: 8,
     },
     timeRow: {
         flexDirection: 'row',
-        justifyContent: 'flex-end',
-        paddingHorizontal: 8,
+        justifyContent: 'flex-start',
+        paddingHorizontal: 0,
     },
     timeText: {
         fontSize: 12,
         color: Colors.light.textSecondary,
         fontWeight: '600',
     },
-    controlsRow: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        paddingHorizontal: 8,
-    },
-    volumeControl: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 12,
-        flex: 1,
-    }
 });

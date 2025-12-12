@@ -8,49 +8,44 @@ const SLIDER_HEIGHT = HEIGHT * 0.2;
 
 export const styles = StyleSheet.create({
     container: {
-        width: '100%',
-
-        paddingHorizontal: 20,
-        marginTop: 16,
+        flexDirection: 'row',
         alignItems: 'center',
     },
     label: {
-        fontSize: 14,
-        fontWeight: '600',
-        marginBottom: 8,
-        color: Colors.light.text,
+        display: 'none',
     },
     sliderTrack: {
-        width: 10,
-        height: SLIDER_HEIGHT,
-        backgroundColor: Colors.light.volumeTrack,
-        borderRadius: 4,
+        flex: 1,
+        height: 4,
+        backgroundColor: '#4B5563',
+        borderRadius: 2,
         justifyContent: 'center',
         overflow: 'visible',
     },
     sliderProgress: {
         position: 'absolute',
         left: 0,
-        right: 0,
+        top: 0,
         bottom: 0,
-        backgroundColor: Colors.light.accent,
-        borderRadius: 4,
+        backgroundColor: '#FFFFFF',
+        borderRadius: 2,
     },
     sliderThumb: {
         width: THUMB_SIZE,
         height: THUMB_SIZE,
-        backgroundColor: Colors.light.background,
+        backgroundColor: '#FFFFFF', // White thumb
         borderRadius: THUMB_SIZE / 2,
         position: 'absolute',
-        top: 0,
-        left: '50%',
-        marginLeft: -THUMB_SIZE / 2,
-        borderColor: Colors.light.background,
-        shadowColor: Colors.light.background,
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.25,
-        shadowRadius: 3.84,
-        elevation: 5,
+        left: 0, // Controlled by transform
+        top: '50%',
+        marginTop: -THUMB_SIZE / 2, // Centered vertically
+        zIndex: 1,
+        // Elevation for visibility
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.22,
+        shadowRadius: 2.22,
+        elevation: 3,
     },
     volumeText: {
         position: 'absolute',
@@ -60,7 +55,7 @@ export const styles = StyleSheet.create({
         textAlign: 'center',
         width: '100%',
         pointerEvents: 'none',
-        top: -2,
+        display: 'none',
     },
 });
 

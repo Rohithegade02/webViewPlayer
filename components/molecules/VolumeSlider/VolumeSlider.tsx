@@ -1,117 +1,95 @@
+import { Icon } from '@/components/atoms';
+import { Colors } from '@/constants';
 import React, { memo, useEffect } from 'react';
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, {
     useAnimatedStyle,
-    useDerivedValue,
     useSharedValue,
     withSpring,
     withTiming
 } from 'react-native-reanimated';
 import { scheduleOnRN } from 'react-native-worklets';
-import { SLIDER_HEIGHT_EXPORT, styles, THUMB_SIZE_EXPORT } from './styles';
+import { styles, THUMB_SIZE_EXPORT } from './styles';
 import { VolumeSliderProps } from './types';
 
-const SLIDER_HEIGHT = SLIDER_HEIGHT_EXPORT;
-const THUMB_SIZE = THUMB_SIZE_EXPORT;
 
 export const VolumeSlider = memo(({ volume, setVolume }: VolumeSliderProps) => {
-    const offset = useSharedValue<number>(0);
+    const SLIDER_WIDTH = 80;
+    const THUMB_SIZE = THUMB_SIZE_EXPORT;
+    const MAX_VALUE = SLIDER_WIDTH; // Thumb moves from 0 to MAX
+
+    const offset = useSharedValue<number>(volume * MAX_VALUE);
     const isDragging = useSharedValue(false);
-    const MAX_VALUE = SLIDER_HEIGHT - THUMB_SIZE;
     const volumeShared = useSharedValue(volume);
 
-    // Update shared value when prop changes
     useEffect(() => {
-        volumeShared.value = volume;
-    }, [volume]);
-
-    // Update slider position on UI thread (only when NOT dragging)
-    useDerivedValue(() => {
-        'worklet';
         if (!isDragging.value) {
-            // 0 volume = MAX_VALUE offset (bottom)
-            // 1 volume = 0 offset (top)
-            const targetOffset = (1 - volumeShared.value) * MAX_VALUE;
-            offset.value = withTiming(targetOffset, {
-                duration: 100,
-            });
+            offset.value = withTiming(volume * MAX_VALUE, { duration: 100 });
+            volumeShared.value = volume;
         }
-    });
+    }, [volume, MAX_VALUE]);
 
     const pan = Gesture.Pan()
         .onStart(() => {
-            'worklet';
             isDragging.value = true;
         })
         .onChange((event) => {
-            'worklet';
-            const newOffset = offset.value + event.changeY;
+            const newOffset = offset.value + event.changeX;
             offset.value = Math.max(0, Math.min(MAX_VALUE, newOffset));
-            // Update volume in real-time as you drag
-            volumeShared.value = 1 - (offset.value / MAX_VALUE);
+            const newVolume = offset.value / MAX_VALUE;
+            volumeShared.value = newVolume;
         })
         .onEnd(() => {
-            'worklet';
-            const newVolume = 1 - (offset.value / MAX_VALUE);
+            const newVolume = offset.value / MAX_VALUE;
             volumeShared.value = newVolume;
-
-            // Set volume
             scheduleOnRN(setVolume, newVolume);
 
             setTimeout(() => {
-                'worklet';
                 isDragging.value = false;
             }, 200);
         });
 
     const tap = Gesture.Tap().onStart((event) => {
-        'worklet';
-        const tapY = event.y - THUMB_SIZE / 2;
-        const targetOffset = Math.max(0, Math.min(MAX_VALUE, tapY));
-
-        offset.value = withSpring(targetOffset, {
-            damping: 20,
-            stiffness: 90,
-        });
-
-        const newVolume = 1 - (targetOffset / MAX_VALUE);
+        // tap on track
+        const tapX = event.x;
+        const targetOffset = Math.max(0, Math.min(MAX_VALUE, tapX));
+        offset.value = withSpring(targetOffset);
+        const newVolume = targetOffset / MAX_VALUE;
         volumeShared.value = newVolume;
-
         scheduleOnRN(setVolume, newVolume);
     });
 
-    const composed = Gesture.Simultaneous(pan, tap);
-
     const thumbStyle = useAnimatedStyle(() => {
         return {
-            transform: [{ translateY: offset.value }],
+            transform: [{ translateX: offset.value - (THUMB_SIZE / 2) }],
         };
     });
 
     const progressStyle = useAnimatedStyle(() => {
-        // Height based on volume
-        // Since offset goes 0 -> MAX, volume goes 1 -> 0
-        // We want height to be related to SLIDER_HEIGHT maybe? 
-        // Or simply: height from bottom up.
-        // If offset is 0 (top), height is full.
-        // If offset is MAX (bottom), height is minimal/0.
-        // height = SLIDER_HEIGHT - offset.value (approx, or adjusting for thumb)
-        // Or simpler: height = volumeShared.value * SLIDER_HEIGHT
         return {
-            height: `${volumeShared.value * 100}%`,
+            width: offset.value,
         };
     });
 
     return (
         <View style={styles.container}>
-            <Text style={styles.label}> Volume: {Math.round(volume * 100)}%</Text>
-            <View style={styles.sliderTrack}>
-                <Animated.View style={[styles.sliderProgress, progressStyle]} />
-                <GestureDetector gesture={composed}>
+            {/* Icon (Left) */}
+            <Icon
+                name={volume === 0 ? "volume-off" : volume < 0.5 ? "volume-down" : "volume-up"}
+                type="MaterialIcons"
+                size={20}
+                color={Colors.light.textInverse}
+                style={{ marginRight: 2 }}
+            />
+
+            {/* Slider Track */}
+            <GestureDetector gesture={Gesture.Simultaneous(pan, tap)}>
+                <View style={[styles.sliderTrack, { width: SLIDER_WIDTH }]}>
+                    <Animated.View style={[styles.sliderProgress, progressStyle]} />
                     <Animated.View style={[styles.sliderThumb, thumbStyle]} />
-                </GestureDetector>
-            </View>
+                </View>
+            </GestureDetector>
         </View>
     );
 });

@@ -1,5 +1,5 @@
 import React, { memo, useEffect } from 'react';
-import { ActivityIndicator, Dimensions, TextInput, View } from 'react-native';
+import { ActivityIndicator, TextInput, View } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, {
     useAnimatedProps,
@@ -13,15 +13,17 @@ import { scheduleOnRN } from 'react-native-worklets';
 import { styles } from './styles';
 import { AnimatedSliderProps } from './types';
 
-const SLIDER_WIDTH = Dimensions.get('window').width * 0.7;
 const THUMB_SIZE = 16;
 const AnimatedText = Animated.createAnimatedComponent(TextInput);
 
-
 export const AnimatedSlider = memo(({ currentTime, duration, seekTo, isLoading = false }: AnimatedSliderProps) => {
+    const [sliderWidth, setSliderWidth] = React.useState(0);
     const offset = useSharedValue<number>(0);
     const isDragging = useSharedValue(false);
-    const MAX_VALUE = SLIDER_WIDTH - THUMB_SIZE;
+
+    // MAX_VALUE depends on measured width
+    const MAX_VALUE = sliderWidth > 0 ? sliderWidth - THUMB_SIZE : 0;
+
     const currentTimeShared = useSharedValue(currentTime);
     const durationShared = useSharedValue(duration);
 
@@ -33,7 +35,8 @@ export const AnimatedSlider = memo(({ currentTime, duration, seekTo, isLoading =
 
     useDerivedValue(() => {
         'worklet';
-        if (!isDragging.value && durationShared.value > 0) {
+        // Only update if we have a valid width
+        if (!isDragging.value && durationShared.value > 0 && MAX_VALUE > 0) {
             const progress = currentTimeShared.value / durationShared.value;
             const targetOffset = progress * MAX_VALUE;
 
@@ -50,12 +53,14 @@ export const AnimatedSlider = memo(({ currentTime, duration, seekTo, isLoading =
         })
         .onChange((event) => {
             'worklet';
+            if (MAX_VALUE === 0) return;
             const newOffset = offset.value + event.changeX;
             offset.value = Math.max(0, Math.min(MAX_VALUE, newOffset));
             currentTimeShared.value = newOffset / MAX_VALUE * durationShared.value;
         })
         .onEnd(() => {
             'worklet';
+            if (MAX_VALUE === 0) return;
             const progress = offset.value / MAX_VALUE;
             const newTime = progress * durationShared.value;
 
@@ -72,6 +77,7 @@ export const AnimatedSlider = memo(({ currentTime, duration, seekTo, isLoading =
 
     const tap = Gesture.Tap().onStart((event) => {
         'worklet';
+        if (MAX_VALUE === 0) return;
         const tapX = event.x - THUMB_SIZE / 2;
         const targetOffset = Math.max(0, Math.min(MAX_VALUE, tapX));
 
@@ -116,10 +122,12 @@ export const AnimatedSlider = memo(({ currentTime, duration, seekTo, isLoading =
         };
     });
 
-
     return (
-        <View style={styles.container}>
-            <View style={styles.sliderTrack}>
+        <View
+            style={styles.container}
+            onLayout={(e) => setSliderWidth(e.nativeEvent.layout.width)}
+        >
+            <View style={[styles.sliderTrack, { width: '100%' }]}>
                 <AnimatedText
                     animatedProps={animatedProps}
                     style={styles.timeText}
