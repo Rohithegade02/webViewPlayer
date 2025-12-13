@@ -3,6 +3,11 @@ import { useVideoPlayerHook } from '@/hooks/useVideoPlayer'
 import React, { useCallback, useState } from 'react'
 import VideoViewScreenPresentation from './VideoViewScreenPresentation'
 
+/*
+ * VideoViewScreenContainer Component
+ *
+ * This component is responsible for handling the business logic for the VideoViewScreen.
+ */
 const VideoViewScreenContainer = () => {
     const [showControls, setShowControls] = useState<boolean>(true);
 

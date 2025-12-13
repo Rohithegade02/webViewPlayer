@@ -9,6 +9,11 @@ import { VideoViewScreenHeader } from './components/VideoViewScreenHeader'
 import { styles } from './styles'
 import { VideoViewScreenProps } from './types'
 
+/*
+ * VideoViewScreenPresentation Component
+ *
+ * This component is responsible for rendering the VideoViewScreenPresentation.
+ */
 const VideoViewScreenPresentation = ({
     player,
     isPlaying,

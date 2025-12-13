@@ -3,6 +3,11 @@ import { Text, View } from 'react-native';
 import { styles } from '../styles';
 import { VideoViewScreenHeaderProps } from '../types';
 
+/*
+ * VideoViewScreenHeader Component
+ *
+ * This component is responsible for rendering the VideoViewScreenHeader.
+ */
 export const VideoViewScreenHeader = memo(({
     currentVideoInfo,
     currentIndex,
