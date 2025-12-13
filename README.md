@@ -37,8 +37,8 @@ This application showcases a WebView integration and a custom Video Player with 
 - [x] **Deep Linking**: Fully configured deep linking for iOS and Android.
   - **Scheme**: `webviewplayer://`
   - **Test URLs**:
-    - Open App: `webviewplayer://`
-    - Open Video Player: `webviewplayer://video-layout`
+    - Open App: `npx uri-scheme open webviewplayer:// --android`
+    - Open Video Player: `npx uri-scheme open webviewplayer://video-layout --android`
 
 ## Technical Highlights
 - **Architecture**: Separation of concerns (Container/Presentation pattern).
