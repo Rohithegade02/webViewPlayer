@@ -11,7 +11,7 @@ interface NotificationProps {
 
 Notifications.setNotificationHandler({
     handleNotification: async () => ({
-        shouldPlaySound: false,
+        shouldPlaySound: true,
         shouldSetBadge: false,
         shouldShowBanner: true,
         shouldShowList: true,
