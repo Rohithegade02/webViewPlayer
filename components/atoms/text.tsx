@@ -4,6 +4,11 @@ import { cva, type VariantProps } from 'class-variance-authority';
 import * as React from 'react';
 import { Platform, Text as RNText, type Role } from 'react-native';
 
+/**
+ * Text component
+ * @param {TextProps} props - The props for the text component.
+ * @returns {React.ReactNode} The text component.
+ */
 const textVariants = cva(
   cn(
     'text-foreground text-base',

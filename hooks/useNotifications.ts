@@ -18,6 +18,10 @@ Notifications.setNotificationHandler({
     }),
 });
 
+/**
+ * Register for push notifications
+ * @returns {boolean} True if push notifications are enabled, false otherwise.
+ */
 async function registerForPushNotificationsAsync() {
     if (Platform.OS === 'android') {
         await Notifications.setNotificationChannelAsync('default', {

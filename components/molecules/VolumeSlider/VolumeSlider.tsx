@@ -14,6 +14,11 @@ import { styles, THUMB_SIZE_EXPORT } from './styles';
 import { VolumeSliderProps } from './types';
 
 
+/**
+ * VolumeSlider component
+ * @param {VolumeSliderProps} props - The props for the volume slider component.
+ * @returns {React.ReactNode} The volume slider component.
+ */
 export const VolumeSlider = memo(({ volume, setVolume }: VolumeSliderProps) => {
     const SLIDER_WIDTH = 80;
     const THUMB_SIZE = THUMB_SIZE_EXPORT;

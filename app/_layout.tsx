@@ -1,3 +1,4 @@
+import { SCREENS } from "@/route";
 import { PortalHost } from "@rn-primitives/portal";
 import { Stack } from "expo-router";
 import React from "react";
@@ -11,8 +12,8 @@ export default function RootLayout() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <StatusBar />
       <Stack>
-        <Stack.Screen name="index" options={{ headerShown: false }} />
-        <Stack.Screen name="(main)" options={{ headerShown: false }} />
+        <Stack.Screen name={SCREENS.INDEX} options={{ headerShown: false }} />
+        <Stack.Screen name={SCREENS.MAIN} options={{ headerShown: false }} />
       </Stack>
       <PortalHost />
     </GestureHandlerRootView>

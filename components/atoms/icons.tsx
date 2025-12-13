@@ -2,6 +2,11 @@ import { AntDesign, Entypo, Feather, FontAwesome, FontAwesome5, Fontisto, Ionico
 import React from 'react';
 import { StyleProp, TextStyle } from 'react-native';
 
+/**
+ * Icon component
+ * @param {IconProps} props - The props for the icon component.
+ * @returns {React.ReactNode} The icon component.
+ */
 export type IconType =
     | 'Ionicons'
     | 'MaterialIcons'

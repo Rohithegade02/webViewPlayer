@@ -1,8 +1,8 @@
+import { Colors } from '@/constants';
 import React, { memo, useEffect } from 'react';
-import { ActivityIndicator, TextInput, View } from 'react-native';
+import { ActivityIndicator, View } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, {
-    useAnimatedProps,
     useAnimatedStyle,
     useDerivedValue,
     useSharedValue,
@@ -14,20 +14,21 @@ import { styles } from './styles';
 import { AnimatedSliderProps } from './types';
 
 const THUMB_SIZE = 16;
-const AnimatedText = Animated.createAnimatedComponent(TextInput);
-
+// const AnimatedText = Animated.createAnimatedComponent(TextInput);
+/**
+ * AnimatedSlider component
+ * @param {AnimatedSliderProps} props - The props for the animated slider component.
+ * @returns {React.ReactNode} The animated slider component.
+ */
 export const AnimatedSlider = memo(({ currentTime, duration, seekTo, isLoading = false }: AnimatedSliderProps) => {
     const [sliderWidth, setSliderWidth] = React.useState(0);
     const offset = useSharedValue<number>(0);
     const isDragging = useSharedValue(false);
 
-    // MAX_VALUE depends on measured width
     const MAX_VALUE = sliderWidth > 0 ? sliderWidth - THUMB_SIZE : 0;
 
     const currentTimeShared = useSharedValue(currentTime);
     const durationShared = useSharedValue(duration);
-
-    // Update shared values when props change
     useEffect(() => {
         currentTimeShared.value = currentTime;
         durationShared.value = duration;
@@ -35,7 +36,6 @@ export const AnimatedSlider = memo(({ currentTime, duration, seekTo, isLoading =
 
     useDerivedValue(() => {
         'worklet';
-        // Only update if we have a valid width
         if (!isDragging.value && durationShared.value > 0 && MAX_VALUE > 0) {
             const progress = currentTimeShared.value / durationShared.value;
             const targetOffset = progress * MAX_VALUE;
@@ -64,10 +64,8 @@ export const AnimatedSlider = memo(({ currentTime, duration, seekTo, isLoading =
             const progress = offset.value / MAX_VALUE;
             const newTime = progress * durationShared.value;
 
-            // Update the shared value immediately for display
             currentTimeShared.value = newTime;
 
-            // Seek to new position
             scheduleOnRN(seekTo, newTime);
             setTimeout(() => {
                 'worklet';
@@ -86,11 +84,9 @@ export const AnimatedSlider = memo(({ currentTime, duration, seekTo, isLoading =
             stiffness: 90,
         });
 
-        // Calculate the new time based on tap position
         const progress = targetOffset / MAX_VALUE;
         const newTime = progress * durationShared.value;
 
-        // Update shared value for immediate display
         currentTimeShared.value = newTime;
 
         scheduleOnRN(seekTo, newTime);
@@ -110,17 +106,7 @@ export const AnimatedSlider = memo(({ currentTime, duration, seekTo, isLoading =
         };
     });
 
-    const animatedProps = useAnimatedProps(() => {
-        const seconds = currentTimeShared.value;
-        const mins = Math.floor(seconds / 60);
-        const secs = Math.floor(seconds % 60);
-        const timeString = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
 
-        return {
-            text: timeString,
-            defaultValue: timeString,
-        };
-    });
 
     return (
         <View
@@ -134,7 +120,7 @@ export const AnimatedSlider = memo(({ currentTime, duration, seekTo, isLoading =
                 </GestureDetector>
                 {isLoading && (
                     <View style={styles.loadingContainer}>
-                        <ActivityIndicator size="small" color="#fff" />
+                        <ActivityIndicator size="small" color={Colors.light.sliderThumb} />
                     </View>
                 )}
             </View>

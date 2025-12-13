@@ -33,15 +33,14 @@ export const styles = StyleSheet.create({
     sliderThumb: {
         width: THUMB_SIZE,
         height: THUMB_SIZE,
-        backgroundColor: Colors.light.volumeTrack, // White thumb
+        backgroundColor: Colors.light.volumeTrack,
         borderRadius: THUMB_SIZE / 2,
         position: 'absolute',
-        left: 0, // Controlled by transform
+        left: 0,
         top: '50%',
-        marginTop: -THUMB_SIZE / 2, // Centered vertically
+        marginTop: -THUMB_SIZE / 2,
         zIndex: 1,
-        // Elevation for visibility
-        shadowColor: "#000",
+        shadowColor: Colors.light.black,
         shadowOffset: { width: 0, height: 1 },
         shadowOpacity: 0.22,
         shadowRadius: 2.22,

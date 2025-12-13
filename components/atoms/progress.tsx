@@ -9,6 +9,11 @@ import Animated, {
   withSpring,
 } from 'react-native-reanimated';
 
+/**
+ * Progress component
+ * @param {ProgressProps} props - The props for the progress component.
+ * @returns {React.ReactNode} The progress component.
+ */
 function Progress({
   className,
   value,
