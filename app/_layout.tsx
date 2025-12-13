@@ -1,3 +1,4 @@
+import { useNotificationObserver } from "@/hooks";
 import { SCREENS } from "@/route";
 import { PortalHost } from "@rn-primitives/portal";
 import { Stack } from "expo-router";
@@ -8,6 +9,7 @@ import "../global.css";
 
 
 export default function RootLayout() {
+  useNotificationObserver();
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <StatusBar />

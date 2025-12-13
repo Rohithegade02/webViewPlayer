@@ -1,5 +1,4 @@
 import { useNotifications } from '@/hooks';
-import { ROUTES } from '@/route';
 import { useRouter } from 'expo-router';
 import React, { useCallback } from 'react';
 import { CONSTANTS_TEXT } from './constants';
@@ -42,11 +41,8 @@ const WebViewScreenContainer = () => {
 
     // Handle video player screen
     const handleVideoPlayerScreen = useCallback(() => {
-        setTimeout(() => {
-            router.push(ROUTES.VIDEO_PLAYER);
-        }, 2000);
         makeVideoPlayerScreenNotification();
-    }, [router]);
+    }, [makeVideoPlayerScreenNotification]);
 
     return (
         <WebViewScreenPresentation
