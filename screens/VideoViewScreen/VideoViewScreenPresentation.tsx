@@ -41,14 +41,11 @@ const VideoViewScreenPresentation = ({
 
     return (
         <SafeAreaView style={styles.container}>
-            {/* Header Content */}
             <VideoViewScreenHeader
                 currentVideoInfo={currentVideoInfo}
                 currentIndex={currentIndex}
                 totalVideos={totalVideos}
             />
-
-            {/* Video Player Container */}
             <View style={styles.videoContainer}>
                 <Pressable style={styles.videoWrapper} onPress={toggleControls}>
                     <VideoView
@@ -63,13 +60,11 @@ const VideoViewScreenPresentation = ({
 
                     />
 
-                    {/* Loading Indicator */}
                     {status === 'loading' && (
                         <View style={[styles.overlay, { backgroundColor: 'transparent' }]}>
                             <ActivityIndicator size="large" color={Colors.light.accent} />
                         </View>
                     )}
-
                     {showControls && !isNativeFullscreen && (
                         <VideoViewScreenCustomController
                             toggleFullscreen={toggleFullscreen}
@@ -85,8 +80,6 @@ const VideoViewScreenPresentation = ({
                     )}
                 </Pressable>
             </View>
-
-            {/* Bottom Controls  */}
             <VideoViewBottomController
                 currentTime={currentTime}
                 duration={duration}

@@ -23,7 +23,7 @@ export const styles = StyleSheet.create({
     videoContainer: {
         width: '100%',
         aspectRatio: 16 / 9,
-        backgroundColor: '#000',
+        backgroundColor: Colors.light.background,
         position: 'relative',
     },
     videoWrapper: {
@@ -61,7 +61,7 @@ export const styles = StyleSheet.create({
     },
     volumeSliderWrapper: {
         width: 110,
-
+        marginTop: 4,
         justifyContent: 'center',
         marginLeft: 8,
     },
