@@ -128,10 +128,6 @@ export const AnimatedSlider = memo(({ currentTime, duration, seekTo, isLoading =
             onLayout={(e) => setSliderWidth(e.nativeEvent.layout.width)}
         >
             <View style={[styles.sliderTrack, { width: '100%' }]}>
-                <AnimatedText
-                    animatedProps={animatedProps}
-                    style={styles.timeText}
-                />
                 <Animated.View style={[styles.sliderProgress, progressStyle]} />
                 <GestureDetector gesture={composed}>
                     <Animated.View style={[styles.sliderThumb, thumbStyle]} />

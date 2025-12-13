@@ -34,7 +34,7 @@ export const styles = StyleSheet.create({
     },
     overlay: {
         ...StyleSheet.absoluteFillObject,
-        backgroundColor: Colors.light.videoOverlay, // 'rgba(0, 0, 0, 0.4)'
+        backgroundColor: Colors.light.videoOverlay,
         justifyContent: 'center',
         alignItems: 'center',
     },
@@ -61,6 +61,7 @@ export const styles = StyleSheet.create({
     },
     volumeSliderWrapper: {
         width: 110,
+
         justifyContent: 'center',
         marginLeft: 8,
     },

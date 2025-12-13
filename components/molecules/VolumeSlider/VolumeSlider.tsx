@@ -17,7 +17,7 @@ import { VolumeSliderProps } from './types';
 export const VolumeSlider = memo(({ volume, setVolume }: VolumeSliderProps) => {
     const SLIDER_WIDTH = 80;
     const THUMB_SIZE = THUMB_SIZE_EXPORT;
-    const MAX_VALUE = SLIDER_WIDTH; // Thumb moves from 0 to MAX
+    const MAX_VALUE = SLIDER_WIDTH;
 
     const offset = useSharedValue<number>(volume * MAX_VALUE);
     const isDragging = useSharedValue(false);
@@ -74,16 +74,13 @@ export const VolumeSlider = memo(({ volume, setVolume }: VolumeSliderProps) => {
 
     return (
         <View style={styles.container}>
-            {/* Icon (Left) */}
             <Icon
                 name={volume === 0 ? "volume-off" : volume < 0.5 ? "volume-down" : "volume-up"}
                 type="MaterialIcons"
                 size={20}
-                color={Colors.light.textInverse}
+                color={Colors.light.primary}
                 style={{ marginRight: 2 }}
             />
-
-            {/* Slider Track */}
             <GestureDetector gesture={Gesture.Simultaneous(pan, tap)}>
                 <View style={[styles.sliderTrack, { width: SLIDER_WIDTH }]}>
                     <Animated.View style={[styles.sliderProgress, progressStyle]} />

@@ -17,7 +17,7 @@ export const styles = StyleSheet.create({
     sliderTrack: {
         flex: 1,
         height: 4,
-        backgroundColor: '#4B5563',
+        backgroundColor: Colors.light.primary,
         borderRadius: 2,
         justifyContent: 'center',
         overflow: 'visible',
@@ -27,13 +27,13 @@ export const styles = StyleSheet.create({
         left: 0,
         top: 0,
         bottom: 0,
-        backgroundColor: '#FFFFFF',
+        backgroundColor: Colors.light.volumeTrack,
         borderRadius: 2,
     },
     sliderThumb: {
         width: THUMB_SIZE,
         height: THUMB_SIZE,
-        backgroundColor: '#FFFFFF', // White thumb
+        backgroundColor: Colors.light.volumeTrack, // White thumb
         borderRadius: THUMB_SIZE / 2,
         position: 'absolute',
         left: 0, // Controlled by transform
