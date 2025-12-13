@@ -16,23 +16,29 @@ This application showcases a WebView integration and a custom Video Player with 
 - **`/constants`**: App-wide constants (Colors, Text Strings).
 - **`/hooks`**: Custom hooks (e.g., `useNotifications`, `useVideoPlayer`).
 
-## Features
+## Completed Tasks
 
-### WebView Screen
-- **WebView Integration**: Loads external URLs seamlessly.
-- **Notifications**: Buttons to schedule local notifications with delays (2s, 5s).
-- **Navigation**: Direct link to the Video Player screen.
-- **Consistent Styling**: Uses shared design tokens and components.
+### 1. WebView Page
+- [x] **Embedded Website**: Integrated a full-feature WebView to load external URLs.
+- [x] **Local Notifications**: Implemented buttons to schedule notifications.
+  - Triggers with a 2-5 second delay.
+  - Supports multiple distinct notification messages (e.g., "WebView Notification", "Action Completed").
 
-### Video Player Screen
-- **Custom Player**: Built on top of `expo-video`.
-- **Overlay Controls**:
-  - Play, Pause, Skip (+/- 10s), Next/Prev Video.
-  - Fullscreen toggle.
-  - Interactive overlay visibility (tap to show/hide).
-- **Volume Control**: Vertical volume slider with gesture support.
-- **Progress Control**: Drag-to-seek functionality.
-- **Theming**: Dark mode aesthetic for video, consistent with app design.
+### 2. Video Player Page
+- [x] **HLS Video Playback**: Plays HLS streams (e.g., `https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8`).
+- [x] **Custom Controls**: Built a custom overlay with Play, Pause, Skip, and Fullscreen functionalities.
+- [x] **Volume & Seek**: Implemented vertical volume control and a smooth seek slider using `react-native-reanimated`.
+
+### 3. Navigation & UI
+- [x] **Navigation**: Seamless routing between the WebView and Video Player screens.
+- [x] **Component System**: Used an Atomic Design approach for reusable components (Button, Icon, Slider).
+
+### 🌟 Bonus Features
+- [x] **Deep Linking**: Fully configured deep linking for iOS and Android.
+  - **Scheme**: `webviewplayer://`
+  - **Test URLs**:
+    - Open App: `webviewplayer://`
+    - Open Video Player: `webviewplayer://video-layout`
 
 ## Technical Highlights
 - **Architecture**: Separation of concerns (Container/Presentation pattern).
