@@ -4,7 +4,7 @@
     "slug": "webViewPlayer",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/app-image.jpg",
     "scheme": "webviewplayer",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
